@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Deck : MonoBehaviour
@@ -13,13 +14,17 @@ public class Deck : MonoBehaviour
     public Text probMessage;
     public Text PlayerPoints;
     public Text DealerPoints;
-
+    public Text playerBank;
     public int[] values = new int[52];
     int cardIndex = 0;
+    public TMP_Dropdown betOptions;
+    private int playerBalance = 1000;  // Banca inicial del jugador
+    private int currentBet = 0;  // Apuesta actual
 
     private void Awake()
     {
         InitCardValues();
+        UpdateBankDisplay();
     }
 
     private void Start()
@@ -180,5 +185,38 @@ public class Deck : MonoBehaviour
         DealerPoints.text = "Puntos: ?";
         ShuffleCards();
         StartGame();
+    }
+
+    public void SetBet(int bet)
+    {
+        if (bet > 0 && bet <= playerBalance && bet % 10 == 0)
+        {
+            currentBet = bet;
+            UpdateBankDisplay();  // Actualizar la pantalla de banca
+        }
+        else
+        {
+            Debug.LogWarning("Apuesta inválida.");
+        }
+    }
+
+    // Actualizar la pantalla de banca
+    private void UpdateBankDisplay()
+    {
+        playerBank.text = $"Banca: {playerBalance} €";
+    }
+
+    // Actualizar la banca después de ganar
+    private void UpdateBankAfterWin()
+    {
+        playerBalance += currentBet * 2;  // Doblar la apuesta
+        UpdateBankDisplay();
+    }
+
+    // Actualizar la banca después de perder
+    private void UpdateBankAfterLoss()
+    {
+        playerBalance -= currentBet;  // Perder la apuesta
+        UpdateBankDisplay();
     }
 }
