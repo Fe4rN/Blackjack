@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic; // Asegúrate de incluir esta línea
 
 public class Deck : MonoBehaviour
 {
@@ -146,7 +146,7 @@ public class Deck : MonoBehaviour
         if (player.GetComponent<CardHand>().points > 21)
         {
             finalMessage.text = "¡Te pasaste de 21! Pierdes.";
-            UpdateBankAfterLoss();
+            UpdateBankAfterLoss();  // Actualizar la banca después de perder
             hitButton.interactable = false;
             stickButton.interactable = false;
         }
@@ -169,7 +169,7 @@ public class Deck : MonoBehaviour
         if (dealerPoints > 21 || playerPoints > dealerPoints)
         {
             finalMessage.text = "¡Ganaste!";
-            UpdateBankAfterWin();
+            UpdateBankAfterWin();  // Actualizar la banca después de ganar
         }
         else if (playerPoints == dealerPoints)
         {
@@ -178,7 +178,7 @@ public class Deck : MonoBehaviour
         else
         {
             finalMessage.text = "¡El dealer gana!";
-            UpdateBankAfterLoss();
+            UpdateBankAfterLoss();  // Actualizar la banca después de perder
         }
 
         hitButton.interactable = false;
@@ -211,7 +211,7 @@ public class Deck : MonoBehaviour
         }
 
         betOptions.AddOptions(options);
-        betOptions.value = 0;  // Establecer la opción predeterminada a 10
+        betOptions.value = 0;  // Establecer la opción predeterminada a 0 (10 euros)
         betOptions.RefreshShownValue();  // Refrescar el dropdown para mostrar el valor predeterminado
 
         // Establecer la apuesta inicial en base a la selección del dropdown
