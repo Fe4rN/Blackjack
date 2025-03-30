@@ -11,6 +11,8 @@ public class Deck : MonoBehaviour
     public Button playAgainButton;
     public Text finalMessage;
     public Text probMessage;
+    public Text PlayerPoints;
+    public Text DealerPoints;
 
     public int[] values = new int[52];
     int cardIndex = 0;
@@ -102,7 +104,18 @@ public class Deck : MonoBehaviour
 
         dealer.GetComponent<CardHand>().Push(faces[cardIndex], values[cardIndex]);
         dealer.GetComponent<CardHand>().cards[^1].GetComponent<CardModel>().ToggleFace(dealer.GetComponent<CardHand>().cards.Count > 1);
+
+        if (dealer.GetComponent<CardHand>().cards.Count > 1)
+        {
+            DealerPoints.text = $"{values[cardIndex]} + ?";
+        }
+        else
+        {
+            DealerPoints.text = $"{values[cardIndex]}";
+        }
+
         cardIndex++;
+
     }
 
     void PushPlayer()
@@ -114,6 +127,7 @@ public class Deck : MonoBehaviour
         }
 
         player.GetComponent<CardHand>().Push(faces[cardIndex], values[cardIndex]);
+        PlayerPoints.text = $"Puntos: {player.GetComponent<CardHand>().points}";
         cardIndex++;
         CalculateProbabilities();
     }
@@ -142,6 +156,8 @@ public class Deck : MonoBehaviour
         int playerPoints = player.GetComponent<CardHand>().points;
         int dealerPoints = dealer.GetComponent<CardHand>().points;
 
+        DealerPoints.text = $"Puntos: {dealerPoints}";
+
         if (dealerPoints > 21 || playerPoints > dealerPoints)
             finalMessage.text = "¡Ganaste!";
         else if (playerPoints == dealerPoints)
@@ -160,6 +176,8 @@ public class Deck : MonoBehaviour
         finalMessage.text = "";
         player.GetComponent<CardHand>().Clear();
         dealer.GetComponent<CardHand>().Clear();
+        PlayerPoints.text = "Puntos: 0";
+        DealerPoints.text = "Puntos: ?";
         ShuffleCards();
         StartGame();
     }
