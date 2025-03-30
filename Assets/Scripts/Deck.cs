@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,17 +15,19 @@ public class Deck : MonoBehaviour
     public Text probMessage;
     public Text PlayerPoints;
     public Text DealerPoints;
-    public Text playerBank;
+    public Text playerBank;  // Texto para mostrar la banca del jugador
+    public TMP_Dropdown betOptions;  // Dropdown para seleccionar la apuesta
+
     public int[] values = new int[52];
     int cardIndex = 0;
-    public TMP_Dropdown betOptions;
     private int playerBalance = 1000;  // Banca inicial del jugador
-    private int currentBet = 0;  // Apuesta actual
+    private int currentBet = 10;  // Apuesta actual inicializada a 10
 
     private void Awake()
     {
         InitCardValues();
-        UpdateBankDisplay();
+        UpdateBankDisplay();  // Mostrar la banca inicial
+        InitializeBetOptions();  // Inicializar las opciones de apuesta
     }
 
     private void Start()
@@ -120,7 +123,6 @@ public class Deck : MonoBehaviour
         }
 
         cardIndex++;
-
     }
 
     void PushPlayer()
@@ -144,6 +146,7 @@ public class Deck : MonoBehaviour
         if (player.GetComponent<CardHand>().points > 21)
         {
             finalMessage.text = "¡Te pasaste de 21! Pierdes.";
+            UpdateBankAfterLoss();
             hitButton.interactable = false;
             stickButton.interactable = false;
         }
@@ -164,11 +167,19 @@ public class Deck : MonoBehaviour
         DealerPoints.text = $"Puntos: {dealerPoints}";
 
         if (dealerPoints > 21 || playerPoints > dealerPoints)
+        {
             finalMessage.text = "¡Ganaste!";
+            UpdateBankAfterWin();
+        }
         else if (playerPoints == dealerPoints)
+        {
             finalMessage.text = "¡Empate!";
+        }
         else
+        {
             finalMessage.text = "¡El dealer gana!";
+            UpdateBankAfterLoss();
+        }
 
         hitButton.interactable = false;
         stickButton.interactable = false;
@@ -187,17 +198,31 @@ public class Deck : MonoBehaviour
         StartGame();
     }
 
-    public void SetBet(int bet)
+    // Inicializa las opciones de apuesta en el dropdown
+    private void InitializeBetOptions()
     {
-        if (bet > 0 && bet <= playerBalance && bet % 10 == 0)
+        betOptions.ClearOptions();
+        var options = new List<string>();
+        
+        // Añadir opciones de apuesta
+        for (int i = 10; i <= playerBalance; i += 10)
         {
-            currentBet = bet;
-            UpdateBankDisplay();  // Actualizar la pantalla de banca
+            options.Add(i.ToString());
         }
-        else
-        {
-            Debug.LogWarning("Apuesta inválida.");
-        }
+
+        betOptions.AddOptions(options);
+        betOptions.value = 0;  // Establecer la opción predeterminada a 10
+        betOptions.RefreshShownValue();  // Refrescar el dropdown para mostrar el valor predeterminado
+
+        // Establecer la apuesta inicial en base a la selección del dropdown
+        currentBet = int.Parse(options[0]); // Establecer la apuesta inicial a 10
+    }
+
+    // Método llamado cuando el jugador cambia la apuesta en el dropdown
+    public void OnBetChanged()
+    {
+        currentBet = int.Parse(betOptions.options[betOptions.value].text); // Actualizar la apuesta actual según la opción seleccionada
+        UpdateBankDisplay();  // Actualizar la pantalla de banca
     }
 
     // Actualizar la pantalla de banca
